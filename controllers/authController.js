@@ -205,9 +205,8 @@ exports.protected = async(req, res, next) => {
                     }
                 }).catch((err) => {
                     console.log(err);
-                    if (err.message == "invalid signature") {
-                        response(404, 0, 'Unauthorized', res);
-                    }
+                    return response(200, 0, 'Token invalied or expire', res);
+
                 })
             }
         } else {
@@ -240,10 +239,9 @@ exports.adminProtected = async(req, res, next) => {
                     }
 
                 }).catch((err) => {
-                    console.log(err);
-                    if (err.message == "invalid signature") {
-                        response(404, 0, 'Unauthorized', res);
-                    }
+                    // console.log(err);
+                    return response(200, 0, 'Token invalied or expire', res);
+
 
                 })
             }
