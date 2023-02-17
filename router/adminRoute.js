@@ -55,7 +55,7 @@ router.get("/booking", authController.adminProtected, adminBookingController.get
 router.post("/booking", authController.adminProtected, adminBookingController.booking);
 
 router.get("/booking/:id", authController.adminProtected, carController.getBooking);
-router.post("/booking/:id", authController.adminProtected, adminBookingController.editBooking);
+router.post("/booking/:id",  adminBookingController.editBooking);
 
 // router.post("/addDriver", authController.adminProtected, carController.addDriver);
 
