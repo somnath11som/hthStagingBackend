@@ -556,13 +556,12 @@ exports.booking = async(req, res, next) => {
                         Booking Date: ${new Date(bookingInsert.created_at ?? '')},<br>
                         Start date: ${new Date(bookingInsert.bookingDate ?? '')},<br>
                         Pickup Time: ${bookingInsert.pickupTime ?? ''},<br>
-                        Pickup Location: ${bookingInsert.pickupLocation ?? ''},<br>
+                        Pickup Location: ${bookingInsert.travelerInfo.pickupLocation ?? ''},<br>
                         Total Days: ${bookingInsert.totalDays ?? ''},</b><br><br>
 
                         Please <b><a href="${process.env.LIVE_URL}/agent/qrCode/${bookingInsert.pnrno}">click here</a></b> open your vehicle verification QR code. You need to scan before trip start with driver for verify your trip. After verification your trip will be start. Wish you a happy journey. 
                         <br><br>Regards 
                         <br>HTH CABS support team`
-                        
                     };
                     response(201, 1, bookingInsert, res);
                     const updateBackup = await BookingBackup.updateOne({pnrno:req.body.backupPnrno}, {bookingId:bookingInsert.id});

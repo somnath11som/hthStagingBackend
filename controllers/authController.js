@@ -231,15 +231,15 @@ exports.adminProtected = async(req, res, next) => {
                 const decode = promisify(jwt.verify);
                 decode(token, process.env.JWT_SECRET).then((user) => {
                     if (user.role == 'admin') {
-                        req.authUser = admin;
-                        // console.log(req.authUser)
+                        req.authUser = user;
+                        console.log(req.authUser)
                         next();
                     } else {
                         response(404, 0, 'Unauthorized', res);
                     }
 
                 }).catch((err) => {
-                    // console.log(err);
+                    console.log(err);
                     return response(200, 0, 'Token invalied or expire', res);
 
 

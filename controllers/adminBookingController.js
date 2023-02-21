@@ -93,7 +93,7 @@ exports.booking = async(req, res, next) => {
                 carPref:carPref,
                 payment: payment,
                 bookingDate: bookingDate,
-                createdAt: createdAt,
+                created_at: createdAt,
                 pickupTime: pickupTime,
                 pickupLocation: req.body.pickupLocation,
                 travelerInfo: travelerInfo,
@@ -104,6 +104,7 @@ exports.booking = async(req, res, next) => {
                 // travelerEmail: travelerEmail,
                 userId: req.authUser.id,
                 bookingId: new Date().getTime(),
+                
             };
 
 
@@ -117,12 +118,24 @@ exports.booking = async(req, res, next) => {
                 const bookingInsert = await Booking.create(data);
                 if (bookingInsert) {
                     let options = {
-                        email: req.authUser.email,
+                        email: travelerInfo.travelerEmail,
                         subject: 'Booking Confirmation',
-                        message: bookingInsert.pnrno
+                        message: `Dear Customer,<br>
+                        Your booking is confirmed<br><br>
+                        <b>PNRNO:${bookingInsert.pnrno},<br>
+                        Booking Date: ${new Date(bookingInsert.created_at ?? '')},<br>
+                        Start date: ${new Date(bookingInsert.bookingDate ?? '')},<br>
+                        Pickup Time: ${bookingInsert.pickupTime ?? ''},<br>
+                        Pickup Location: ${bookingInsert.travelerInfo.pickupLocation ?? ''},<br>
+                        Total Days: ${bookingInsert.totalDays ?? ''},</b><br><br>
+
+                        Please <b><a href="${process.env.LIVE_URL}/agent/qrCode/${bookingInsert.pnrno}">click here</a></b> open your vehicle verification QR code. You need to scan before trip start with driver for verify your trip. After verification your trip will be start. Wish you a happy journey. 
+                        <br><br>Regards 
+                        <br>HTH CABS support team`
                     };
                     response(201, 1, bookingInsert, res);
                     const sendmail = await sendEmail(options);
+                    console.log(sendmail);
                     return;
 
                 } else {
@@ -176,7 +189,6 @@ exports.editBooking = async(req, res, next)=>{
             req.body.carModel &&
             req.body.travelInfo &&
             req.body.price &&
-            req.body.payment &&
             req.body.pickupTime &&
             req.body.totalDays &&
             req.body.bookingDate &&
@@ -193,7 +205,6 @@ exports.editBooking = async(req, res, next)=>{
             const travelInfo = req.body.travelInfo;
             const price = req.body.price;
             const carModel = req.body.carModel;
-            const payment = req.body.payment;
             const bookingDate = req.body.bookingDate;
             const pickupTime = req.body.pickupTime;
             const travelerInfo = req.body.travelerInfo;
@@ -220,7 +231,6 @@ exports.editBooking = async(req, res, next)=>{
                 travelInfo: travelInfo,
                 price: price,
                 carModel: carModel,
-                payment: payment,
                 bookingDate: bookingDate,
                 updatedAt: createdAt,
                 pickupTime: pickupTime,
@@ -228,6 +238,7 @@ exports.editBooking = async(req, res, next)=>{
                 travelerInfo: travelerInfo,
                 carQuantity: carQuantity,
                 markup: markup,
+                modifiedBy:req.authUser.id
                 // travelerAltMobile: travelerAltMobile,
                 // travelerMobile: travelerMobile,
                 // travelerEmail: travelerEmail,

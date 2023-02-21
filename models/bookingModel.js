@@ -127,7 +127,7 @@ const BookingSchema = new mongoose.Schema({
         updatedAt:{
             type: Date,
         },
-       
+        modifiedBy:{ type: mongoose.Schema.ObjectId, ref: "User" },
         car:{type: mongoose.Schema.ObjectId, ref: 'Car'},
         driver: { type: mongoose.Schema.ObjectId, ref: 'Driver' },
         userId: { type: mongoose.Schema.ObjectId, ref: "User" },
