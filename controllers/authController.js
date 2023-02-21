@@ -231,7 +231,7 @@ exports.adminProtected = async(req, res, next) => {
                 const decode = promisify(jwt.verify);
                 decode(token, process.env.JWT_SECRET).then((user) => {
                     if (user.role == 'admin') {
-                        req.authUser = user;
+                        req.authUser = admin;
                         // console.log(req.authUser)
                         next();
                     } else {

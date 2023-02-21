@@ -6,7 +6,7 @@ const app = require("./app");
 let DB;
 let port;
 
-    DB = process.env.DATABASE_LIVE
+    DB = process.env.DATABASE_TEST
     port = process.env.PORT;
 
 

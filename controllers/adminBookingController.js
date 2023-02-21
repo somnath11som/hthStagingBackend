@@ -216,14 +216,13 @@ exports.editBooking = async(req, res, next)=>{
             }
             console.log(dbDate);
             const data = {
-                pnrno:dbDate,
                 totalDays: totalDays,
                 travelInfo: travelInfo,
                 price: price,
                 carModel: carModel,
                 payment: payment,
                 bookingDate: bookingDate,
-                createdAt: createdAt,
+                updatedAt: createdAt,
                 pickupTime: pickupTime,
                 pickupLocation: req.body.pickupLocation,
                 travelerInfo: travelerInfo,
@@ -232,8 +231,8 @@ exports.editBooking = async(req, res, next)=>{
                 // travelerAltMobile: travelerAltMobile,
                 // travelerMobile: travelerMobile,
                 // travelerEmail: travelerEmail,
-                userId: req.authUser.id,
-                bookingId: new Date().getTime(),
+                // userId: req.authUser.id,
+                // bookingId: new Date().getTime(),
             };
 
 
@@ -248,7 +247,7 @@ exports.editBooking = async(req, res, next)=>{
                 if (bookingInsert) {
                     let options = {
                         email: req.authUser.email,
-                        subject: 'Booking Confirmation',
+                        subject: 'Booking Updated',
                         message: bookingInsert.pnrno
                     };
                     return response(201, 1, `pnrno: ${req.params.id}, Udate successfully`, res);

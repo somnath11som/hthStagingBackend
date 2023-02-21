@@ -12,6 +12,7 @@ const PlacePrice = require("./../models/placeModel");
 const CarTypeCount = require("./../models/carTypeCount");
 const GetQuote = require("./../models/getQuoteModel");
 const Booking = require("./../models/bookingModel");
+const BookingBackup = require("./../models/bookingBackupModel");
 const Razorpay = require("razorpay");
 const Includes = require("../models/includeModel");
 const Register = require("../models/registerModel");
@@ -483,7 +484,8 @@ exports.booking = async(req, res, next) => {
             req.body.totalDays &&
             req.body.bookingDate &&
             req.body.travelerInfo &&
-            req.body.markup
+            req.body.markup &&
+            req.body.backupPnrno
         ) {
             let days = 0;
 
@@ -497,6 +499,7 @@ exports.booking = async(req, res, next) => {
             const travelerInfo = req.body.travelerInfo;
             const carQuantity = req.body.carQuantity;
             const markup = req.body.markup;
+            
             //   const travelerAltMobile = req.body.travelerAltMobile;
             //   const travelerMobile = req.body.travelerMobile;
             //   const travelerEmail = req.body.travelerEmail;
@@ -562,6 +565,7 @@ exports.booking = async(req, res, next) => {
                         
                     };
                     response(201, 1, bookingInsert, res);
+                    const updateBackup = await BookingBackup.updateOne({pnrno:req.body.backupPnrno}, {bookingId:bookingInsert.id});
                     const sendmail = await sendEmail(options);
                     return;
 
@@ -825,5 +829,92 @@ exports.updateArriveStatus = async(req, res, next) => {
         }
     } catch (error) {
         return res.status(400).json({ status: 0, msg: error });
+    }
+}
+
+
+exports.bookingBackup = async(req, res, next) => {
+    try {
+        // console.log(new Date().getTime());
+        // return;
+        if (
+            req.body.carModel &&
+            req.body.travelInfo &&
+            req.body.price &&
+            req.body.pickupTime &&
+            req.body.totalDays &&
+            req.body.bookingDate &&
+            req.body.travelerInfo &&
+            req.body.markup
+        ) {
+            let days = 0;
+
+            const totalDays = req.body.totalDays;
+            const travelInfo = req.body.travelInfo;
+            const price = req.body.price;
+            const carModel = req.body.carModel;
+            const payment = req.body.payment;
+            const bookingDate = req.body.bookingDate;
+            const pickupTime = req.body.pickupTime;
+            const travelerInfo = req.body.travelerInfo;
+            const carQuantity = req.body.carQuantity;
+            const markup = req.body.markup;
+            const createdAt = new Date();
+            console.log(createdAt);
+            const currentDate = new Date().toJSON().slice(0,10);
+            let date = '';
+            let dbDate = date.concat('PNR-',currentDate.slice(8, 10), currentDate.slice(5, 7), currentDate.slice(2, 4), getRandomInt(9999));
+            let checkpnr = 1;
+            while(checkpnr == 1){
+                const pnrCheck = await Booking.findOne({pnrno:dbDate});
+                if(!pnrCheck){
+                    checkpnr = 0;
+                }
+            }
+            console.log(dbDate);
+            const data = {
+                pnrno:dbDate,
+                totalDays: totalDays,
+                travelInfo: travelInfo,
+                price: price,
+                carModel: carModel,
+                bookingDate: bookingDate,
+                created_at: createdAt,
+                pickupTime: pickupTime,
+                pickupLocation: req.body.pickupLocation,
+                travelerInfo: travelerInfo,
+                carQuantity: carQuantity,
+                markup: markup,
+                userId: req.authUser.id,
+                createdBy: req.authUser.role,
+                
+            };
+
+
+            travelInfo.forEach(async(el) => {
+                days = days + el.days;
+                console.log(travelInfo);
+            });
+
+
+            if (days == totalDays) {
+                const bookingInsert = await BookingBackup.create(data);
+                if (bookingInsert) {
+                   
+                    return response(201, 1, {backupPnrno:dbDate, msg:'Backup created successfully'}, res);
+                   
+
+                } else {
+                    return response(404, 0, "Something error! Please try again", res);
+                }
+            } else {
+                return response(404, 0, "Total days does not matched", res);
+            }
+        } else {
+            return response(404, 0, "Please fill all fields", res);
+        }
+    } catch (err) {
+        console.log(err);
+        return response(404, 0, err.message, res);
     }
 }

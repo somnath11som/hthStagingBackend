@@ -47,6 +47,9 @@ router.post(
 
 router.post("/booking", authController.protected, tourAgentController.booking);
 
+router.post("/booking/backup", authController.protected, tourAgentController.bookingBackup);
+
+
 router.get(
     "/getAllBooking",
     authController.protected,
