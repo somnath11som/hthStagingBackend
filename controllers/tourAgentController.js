@@ -420,9 +420,6 @@ exports.createOrder = async(req, res) => {
     amount = req.body.amount * 100;
     console.log(amount);
     let instance = new Razorpay({
-        // key_id: "rzp_test_pLeJZKECvw4lZM",
-        // key_secret: "RmcoYFt33WzBhC3I3rsb8G1C",
-
         key_id: process.env.KEY_ID,
         key_secret: process.env.KEY_SECRET,
     });
@@ -756,11 +753,9 @@ exports.createOrderTest = async(req, res) => {
     amount = req.body.amount * 100;
     console.log(amount);
     let instance = new Razorpay({
-        key_id: "rzp_test_pLeJZKECvw4lZM",
-        key_secret: "RmcoYFt33WzBhC3I3rsb8G1C",
-
-        // key_id: process.env.KEY_ID,
-        // key_secret: process.env.KEY_SECRET,
+ 
+        key_id: process.env.KEY_ID_TEST,
+        key_secret: process.env.KEY_SECRET_TEST,
     });
 
     let options = {
